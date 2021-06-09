@@ -31,5 +31,9 @@ app.get('/getCoordinates', (req, res) => {
     res.render('getCoordinates');
 });
 
+app.get('/geoCoder', (req, res) => {
+    res.render('geoCoder');
+});
+
 const PORT = 3333;
 app.listen(PORT, () => console.log('Listening on 3333'));

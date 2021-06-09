@@ -7,6 +7,14 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css" rel="stylesheet">
         <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js"></script>
+
+        <!-- geocoder -->
+        <script
+            src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js'></script>
+        <link rel='stylesheet'
+            href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css'
+            type='text/css' />
+
         <style>
             body {
                 margin: 0;
@@ -70,9 +78,6 @@
                     <input id="outdoors-v11" type="radio" name="rtoggle" value="outdoors">
                     <label for="outdoors-v11">outdoors</label>
         </div>
-        <button id="bbb">btun</button>
-        <pre id="coordinates" class="coordinates"></pre>
-
 
         <script>
             mapboxgl.accessToken = 'pk.eyJ1Ijoic3VyYWprYWxlIiwiYSI6ImNrcG9ibmZpbjBzYjkyd3VlYmYwYnQwdG0ifQ.qCGrhbbjWfNtJyx-o9JfEg';
@@ -85,6 +90,16 @@
                 // center: [76, 18],
                 zoom: 1
             });
+
+            var geocoder = new MapboxGeocoder({ // Initialize the geocoder
+                accessToken: mapboxgl.accessToken, // Set the access token
+                placeholder: 'Search for places in Berkeley',
+                mapboxgl: mapboxgl, // Set the mapbox-gl instance
+                marker: true, // Do not use the default marker style
+            });
+
+            // Add the geocoder to the map
+            map.addControl(geocoder);
 
             map.on('load', function () {
                 // Add a layer showing the places.
@@ -148,15 +163,19 @@
                     inputs[i].onclick = switchLayer;
                 }
 
+                geocoder.on('result', function (e) {
+                    map.getSource('single-point').setData(e.result.geometry);
+                });
             });
 
             var marker = new mapboxgl.Marker({
-                color: "#FFFFFF",
+                color: "#3af3d",
                 draggable: true
             }).setLngLat([76, 18])
                 .addTo(map);
 
             function onDragEnd() {
+                console.log(marker.getLngLat());
                 var lngLat = marker.getLngLat(); ``
                 coordinates.style.display = 'block';
                 coordinates.innerHTML =
